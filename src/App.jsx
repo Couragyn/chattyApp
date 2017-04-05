@@ -21,6 +21,7 @@ class App extends Component {
         }
       ]
     }
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   handleKeyPress = (event) => {
@@ -37,7 +38,7 @@ class App extends Component {
     setTimeout(() => {
       console.log("Simulating incoming message");
       // Add a new message to the list of messages in the data store
-      const newMessage = {id: 2, username: "Michelle", content: "Hello there!"};
+      const newMessage = {id: this.state.messages.length, username: "Michelle", content: "Hello there!"};
       const messages = this.state.messages.concat(newMessage)
       // Update the state of the app component.
       // Calling setState will trigger a call to render() in App and all child components.
