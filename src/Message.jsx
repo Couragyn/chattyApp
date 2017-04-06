@@ -9,10 +9,12 @@ class Message extends Component {
     return (
 
         <div className="message">
-          <span className="message-username">{this.props.message.username}</span>
+          <div className="message system">
+            {this.props.message.notificaton}
+          </div>
+          <span className="message-username" style={{color:this.props.message.color}}>{this.props.message.username}</span>
           <span className="message-content">{this.props.message.content}</span>
         </div>
-
     );
   }
 }

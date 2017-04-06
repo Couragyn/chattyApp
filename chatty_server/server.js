@@ -19,6 +19,7 @@ const wss = new SocketServer({ server });
 
 wss.broadcast = function broadcast(data) {
   // Loop over each of the clients that the server is keeping track of
+
   wss.clients.forEach((client) => {
     // If the client is still ready to receive messages
     if (client.readyState === WebSocket.OPEN) {
@@ -28,24 +29,51 @@ wss.broadcast = function broadcast(data) {
   });
 };
 
-
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
-  console.log('new connection');
   // Whenever a message comes to the server from a client, call this function
-  ws.on('message', (data) => {
-    message = JSON.parse(data);
+  let userCount = {
+    type: "count",
+    size: wss.clients.size
+  }
+  wss.broadcast(JSON.stringify(userCount));
 
+  ws.on('message', (data) => {
+
+    message = JSON.parse(data);
     let uuid = uuidV1();
-    let returnMessage = {
-      id: uuid,
-      username: message.username,
-      content: message.content
+    switch(message.type) {
+      case "postMessage":
+        let returnMessage = {
+          type: "incommingMessage",
+          id: uuid,
+          username: message.username,
+          content: message.content,
+          color: message.color
+        }
+        wss.broadcast(JSON.stringify(returnMessage));
+        break;
+      case "postNotification":
+        let returnNotification = {
+          type: "incommingNotification",
+          id: uuid,
+          notificaton: `${message.oldUsername} has changed their name to ${message.newUsername}.`
+        }
+        wss.broadcast(JSON.stringify(returnNotification));
+        break;
+      default:
+        throw new Error("Unknown event type " + message.type);
     }
-    wss.broadcast(JSON.stringify(returnMessage));
   });
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', () => console.log('Client disconnected'));
+  ws.on('close', () => {
+    let userCount = {
+      type: "count",
+      size: wss.clients.size
+    }
+    wss.broadcast(JSON.stringify(userCount));
+    console.log('Client disconnected')
+  });
 });
