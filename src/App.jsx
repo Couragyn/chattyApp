@@ -14,7 +14,7 @@ class App extends Component {
         name: "Anon",
         color: color[getRandom()]
     },
-      messages: [],
+      messages: []
     }
   }
 
