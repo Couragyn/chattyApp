@@ -1,4 +1,5 @@
 // server.js
+require('dotenv').config();
 
 const express = require('express');
 const SocketServer = require('ws').Server;
@@ -6,7 +7,7 @@ const uuidV1 = require('uuid/v1');
 const WebSocket = require('ws')
 
 // Set the port to 3001
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Create a new express server
 const server = express()
